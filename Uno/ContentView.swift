@@ -8,82 +8,111 @@
 import SwiftUI
 
 struct ContentView: View {
-    var isFaceUp: Bool = true
     var body: some View {
-        if isFaceUp {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(.white)
-                    .strokeBorder(.black, lineWidth: 2)
-                    .padding()
-                RoundedRectangle(cornerRadius: 25)
-                    .inset(by: 10)
-                    .foregroundStyle(AngularGradient(colors: [.blue.opacity(0.8), .blue, .blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue,.blue.opacity(0.8), .blue], center: .center, startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 360)))
-                    .padding()
-                Ellipse()
-                    .fill(.white)
-                    .rotationEffect(.degrees(45))
-                    .scaleEffect(x: 0.57, y: 0.6)
-                Text("5")
-                    .bold()
-                    .foregroundStyle(.blue)
-                    .font(.system(size: 250, weight: .bold))
-                VStack {
-                    HStack {
-                        Text("5")
-                            .bold()
-                            .foregroundStyle(.white)
-                            .font(.system(size: 70, weight: .bold))
-                        Spacer()
-                            .frame(width: 250)
-                    }
-                    Spacer()
-                        .frame(height: 600)
-                    
-                    
-                }
-                VStack {
-                    Spacer()
-                        .frame(height: 600)
-                    HStack {
-                        Spacer()
-                            .frame(width: 250)
-                        Text("5")
-                            .bold()
-                            .foregroundStyle(.white)
-                            .font(.system(size: 70, weight: .bold))
-                    }
-                    
-                }
-                
+        VStack{
+            CardView()
+            HStack{
+                CardView()
+                CardView()
             }
-        } else {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(.white)
-                    .strokeBorder(.black, lineWidth: 2)
-                    .padding()
-                RoundedRectangle(cornerRadius: 25)
-                    .inset(by: 10)
-                    .fill(.black)
-                    .padding()
-                Ellipse()
-                    .fill(.red)
-                    .rotationEffect(.degrees(45))
-                    .scaleEffect(x: 0.57, y: 0.6)
-                Text("UNO")
-                    .bold()
-                    .foregroundStyle(LinearGradient(colors: [.yellow, .white], startPoint: .top, endPoint: .bottom))
-                    .font(.system(size: 100, weight: .bold))
-                    .rotationEffect(.degrees(-10))
-                    .shadow(color: .black, radius: 5, x: -3, y: 5)
-                
+            HStack{
+                CardView()
+                CardView()
+                CardView()
+                CardView()
+                CardView()
+                CardView()
+                CardView()
             }
         }
-        
     }
 }
 
+struct CardView: View {
+    var isFaceUp: Bool = false
+    @State var cardWidth: CGFloat = 10
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                outerEdge
+                cardBackground
+                centerEllipse
+                centerSymbol
+                if isFaceUp {
+                    cornerSymbols
+                }
+            }
+            .onAppear(){
+                cardWidth = geometry.size.width
+            }
+        }
+        .aspectRatio(2/3, contentMode: .fit)
+    }
+    var outerEdge: some View {
+        RoundedRectangle(cornerRadius: 15)
+            .fill(.white)
+            .strokeBorder(.black, lineWidth: 2)
+        }
+    
+    @ViewBuilder
+    var cardBackground: some View {
+        let backgroundColor: Color = isFaceUp ? .blue : .black
+        
+        RoundedRectangle(cornerRadius: 25)
+            .inset(by: 10)
+            .foregroundStyle(AngularGradient(colors: [backgroundColor.opacity(0.8), backgroundColor, backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor,backgroundColor.opacity(0.8), backgroundColor], center: .center))
+        }
+    
+    var centerEllipse: some View {
+            Ellipse()
+            .fill(isFaceUp ? .white : .red)
+            .frame(width: 0.75 * cardWidth, height: cardWidth)
+                .rotationEffect(.degrees(45))
+        
+    }
+    
+    @ViewBuilder
+    var centerSymbol: some View {
+        if isFaceUp {
+            Text("5")
+                .bold()
+                .foregroundStyle(.blue)
+                .font(.system(size: 0.5 * cardWidth))
+        } else {
+            Text("UNO")
+                .bold()
+                .foregroundStyle(LinearGradient(colors: [.yellow, .white], startPoint: .top, endPoint: .bottom))
+                .font(.system(size: 0.3 * cardWidth, weight: .bold))
+                .rotationEffect(.degrees(-10))
+                .shadow(color: .black, radius: 5, x: -3, y: 5)
+        }
+    }
+    
+    @ViewBuilder
+    var cornerSymbols: some View {
+        let symbolText = Text("5")
+            .bold()
+            .foregroundStyle(.white)
+            .font(.system(size: 0.2 * cardWidth))
+        VStack {
+            HStack {
+                symbolText
+                Spacer()
+                
+            }
+            Spacer()
+            HStack {
+                Spacer()
+                symbolText
+                    .rotationEffect(.degrees(180))
+            }
+            
+        }
+        .padding(0.1 * cardWidth)
+    }
+}
+        
+        
 #Preview {
     ContentView()
 }
